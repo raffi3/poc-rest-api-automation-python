@@ -2,6 +2,7 @@ from marshmallow import ValidationError
 from assertpy import assert_that
 import allure
 
+
 class BaseAssertions:
     """A collection of common assertion helpers for API tests."""
 

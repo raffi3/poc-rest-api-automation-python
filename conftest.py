@@ -92,8 +92,10 @@ def secrets(env, project_root):
             f"Please create it or copy from secrets.ini.example file and set variables (i.e. API_ACCESS_KEY).")
     env_name = env.value
     if env_name not in secrets:
-        pytest.fail(f"\n\n[VALIDATION ERROR]\nThe section [{env.value}] is MISSING from your secrets.ini file."
-            f"\nPlease add this section.\n")
+        pytest.fail(
+            f"\n\n[VALIDATION ERROR]\nThe section [{env.value}] is MISSING from your secrets.ini file."
+            f"\nPlease add this section.\n"
+        )
 
     env_object = secrets[env_name]
     # Check if the key is missing entirely
@@ -116,6 +118,7 @@ def secrets(env, project_root):
                     f"is still set to the placeholder 'API_ACCESS_KEY'.\nPlease replace it with your real API key.\n")
 
     return env_object
+
 
 @pytest.fixture(scope="session")
 def base_url(config):

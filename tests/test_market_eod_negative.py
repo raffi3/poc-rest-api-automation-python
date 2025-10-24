@@ -45,11 +45,12 @@ class TestMarketEodNegative:
             response = market_controller.get_eod_data(filters)
             response_json = response.json()
 
-        with allure.step(f"Verify status code 422 and deserialize error response"):
+        with allure.step("Verify status code 422 and deserialize error response"):
             BaseAssertions.assert_status_code(response, 422)
             error_dto = BaseAssertions.validate_and_deserialize(response_json, error_schema)
 
-        with allure.step(f"Assert error code is '{expected_error_code}' and message contains '{expected_error_message}'"):
+        with allure.step(
+                f"Assert error code is '{expected_error_code}' and message contains '{expected_error_message}'"):
             assert_that(error_dto.error.code).is_equal_to(expected_error_code)
             assert_that(error_dto.error.message).contains(expected_error_message)
 
@@ -65,7 +66,7 @@ class TestMarketEodNegative:
         with allure.step("Define expected error schema and messages"):
             error_schema = ErrorResponseSchema()
             expected_error_code = "validation_error"
-            expected_error_message = "You have to specify at least one symbol"
+            expected_err_message = "You have to specify at least one symbol"
 
         with allure.step("Send GET request to /eod with empty params"):
             response = api_client.get("/eod", params={})
@@ -75,6 +76,6 @@ class TestMarketEodNegative:
             BaseAssertions.assert_status_code(response, 422)
             error_dto = BaseAssertions.validate_and_deserialize(response_json, error_schema)
 
-        with allure.step(f"Assert error code is '{expected_error_code}' and message contains '{expected_error_message}'"):
+        with allure.step(f"Assert error code is '{expected_error_code}' and message contains '{expected_err_message}'"):
             assert_that(error_dto.error.code).is_equal_to(expected_error_code)
-            assert_that(error_dto.error.message).contains(expected_error_message)
+            assert_that(error_dto.error.message).contains(expected_err_message)
