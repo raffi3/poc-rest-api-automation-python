@@ -6,6 +6,7 @@ from pathlib import Path
 from enums.environment import Env
 from dotenv import load_dotenv
 
+
 class APIClient:
     """Responsible for making requests to the API, handling URL construction."""
 
@@ -31,10 +32,10 @@ class APIClient:
         """
         if params is None:
             params = {}
-        
+
         # Automatically add the access key to every request
         params['access_key'] = self.access_key
-        
+
         url = f"{self.base_url}{self.api_version}{endpoint}"
         print("Request URL:", url)
         return requests.get(url, params=params)
@@ -80,6 +81,7 @@ def config(env, project_root):
 
     return config[env.value]
 
+
 @pytest.fixture(scope="session")
 def secrets(env, project_root):
     """Loads secrets from secrets.ini for the specified environment."""
@@ -89,7 +91,9 @@ def secrets(env, project_root):
     read_files = secrets.read(secrets_path)
 
     if not read_files:
-        pytest.fail(f"Could not find or read secrets.ini at: {secrets_path}.\nPlease create it or copy from secrets.ini.example file and set variables (i.e. API_ACCESS_KEY).")
+        pytest.fail(
+            f"Could not find or read secrets.ini at: {secrets_path}.\n"
+            f"Please create it or copy from secrets.ini.example file and set variables (i.e. API_ACCESS_KEY).")
 
     # Check if the key is missing entirely
     if 'access_key' not in secrets:
@@ -102,31 +106,36 @@ def secrets(env, project_root):
 
     # Check if the value is empty
     if not key_value:
-        pytest.fail(f"\n\n[VALIDATION ERROR] The 'access_key' property in the [{env.value}] section of secrets.ini is EMPTY."
+        pytest.fail(
+            f"\n\n[VALIDATION ERROR] The 'access_key' property in the [{env.value}] section of secrets.ini is EMPTY."
             f"\nPlease provide your API key.\n")
 
     # Check if it's still the placeholder value from your example
     if key_value == 'API_ACCESS_KEY':
-        pytest.fail(f"\n\n[VALIDATION ERROR] The 'access_key' in the [{env.value}] section of secrets.ini is still set to the placeholder 'API_ACCESS_KEY'."
-            f"\nPlease replace it with your real API key.\n")
+        pytest.fail(f"\n\n[VALIDATION ERROR] The 'access_key' in the [{env.value}] section of secrets.ini "
+                    f"is still set to the placeholder 'API_ACCESS_KEY'.\nPlease replace it with your real API key.\n")
 
     return key_value
     # return secrets[env.value]
+
 
 @pytest.fixture(scope="session")
 def base_url(config):
     """Provides the base_url from the config."""
     return config['base_url']
 
+
 @pytest.fixture(scope="session")
 def api_version(config):
     """Provides the api_version from the config."""
     return config['api_version']
 
+
 @pytest.fixture(scope="session")
 def access_key(secrets):
     """Provides the access_key from the secrets."""
     return secrets['access_key']
+
 
 @pytest.fixture(scope="session")
 def api_client(base_url, api_version, access_key):

@@ -3,6 +3,7 @@ from datetime import datetime
 from marshmallow import Schema, fields, post_load, RAISE
 from api_services.market.schemas.common_schemas import PaginationSchema, PaginationDTO
 
+
 # Data Transfer Objects (DTOs)
 @dataclass
 class EodDataDTO:
@@ -27,11 +28,13 @@ class EodDataDTO:
     exchange: str
     date: datetime
 
+
 @dataclass
 class EodResponseDTO:
     """DTO for the entire /eod endpoint response."""
     pagination: PaginationDTO
     data: list[EodDataDTO]
+
 
 # Marshmallow Schemas for validation and deserialization
 class EodDataSchema(Schema):
@@ -62,6 +65,7 @@ class EodDataSchema(Schema):
     @post_load
     def make_dto(self, data, **kwargs):
         return EodDataDTO(**data)
+
 
 class EodResponseSchema(Schema):
     """Schema for the entire /eod endpoint response."""

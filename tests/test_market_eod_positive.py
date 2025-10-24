@@ -4,6 +4,7 @@ from api_services.market.filters.eod_filters import EodFilters
 from api_services.market.schemas.eod_response_schema import EodResponseSchema
 from utils.base_assertions import BaseAssertions
 
+
 @pytest.mark.smoke
 @pytest.mark.parametrize("symbol", ["AAPL", "MSFT", "TSLA", "NVDA"])
 def test_get_eod_data_with_symbols(market_controller, symbol):
@@ -24,10 +25,11 @@ def test_get_eod_data_with_symbols(market_controller, symbol):
     assert_that(eod_response_dto.data).is_not_empty()
     assert_that(eod_response_dto.data[0].symbol).is_equal_to(symbol)
 
+
 @pytest.mark.regression
 @pytest.mark.parametrize("symbol, filters, expected_count", [
     ("AAPL", {"limit": 5}, 5),
-    ("MSFT", {"sort": "ASC"}, 100) # Default limit is 100
+    ("MSFT", {"sort": "ASC"}, 100)  # Default limit is 100
 ])
 def test_get_eod_data_with_filters(market_controller, symbol, filters, expected_count):
     """
@@ -41,5 +43,5 @@ def test_get_eod_data_with_filters(market_controller, symbol, filters, expected_
 
     BaseAssertions.assert_status_code(response, 200)
     eod_response_dto = BaseAssertions.validate_and_deserialize(response_json, expected_schema)
-    
+
     assert_that(eod_response_dto.data).is_length(expected_count)

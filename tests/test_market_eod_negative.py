@@ -4,22 +4,24 @@ from api_services.market.filters.eod_filters import EodFilters
 from api_services.market.schemas.error_response_schema import ErrorResponseSchema
 from utils.base_assertions import BaseAssertions
 
+
 @pytest.mark.negative
 @pytest.mark.parametrize("test_case_name, filters_dict, expected_error_code, expected_error_message", [
     (
-        "Invalid Symbol",
-        {"symbols": "INVALID_SYMBOL"},
-        "no_valid_symbols_provided",
-        "At least one valid symbol must be provided"
+            "Invalid Symbol",
+            {"symbols": "INVALID_SYMBOL"},
+            "no_valid_symbols_provided",
+            "At least one valid symbol must be provided"
     ),
     (
-        "Invalid Sort Value",
-        {"symbols": "AAPL", "sort": "INVALID_SORT"},
-        "validation_error",
-        "the value you selected is not a valid choice"
+            "Invalid Sort Value",
+            {"symbols": "AAPL", "sort": "INVALID_SORT"},
+            "validation_error",
+            "the value you selected is not a valid choice"
     )
 ])
-def test_get_eod_data_negative_scenarios(market_controller, test_case_name, filters_dict, expected_error_code, expected_error_message):
+def test_get_eod_data_negative_scenarios(market_controller, test_case_name, filters_dict,
+                                         expected_error_code, expected_error_message):
     """
     Tests the GET /eod endpoint for various invalid inputs.
     It verifies that the API returns a 422 status code and the correct error message.
@@ -35,6 +37,7 @@ def test_get_eod_data_negative_scenarios(market_controller, test_case_name, filt
 
     assert_that(error_dto.error.code).is_equal_to(expected_error_code)
     assert_that(error_dto.error.message).contains(expected_error_message)
+
 
 @pytest.mark.negative
 def test_get_eod_data_missing_symbols(api_client):

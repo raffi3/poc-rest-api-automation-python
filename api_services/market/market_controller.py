@@ -1,6 +1,7 @@
 from api_services.market.filters.eod_filters import EodFilters
 from api_services.market.filters.timezone_filters import TimezoneFilters
 
+
 class MarketController:
     """
     Controller to interact with the 'market' related endpoints of the API.

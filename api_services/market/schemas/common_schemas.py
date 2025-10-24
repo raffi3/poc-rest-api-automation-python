@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from marshmallow import Schema, fields, post_load
 
+
 # DTO (Data Transfer Object)
 @dataclass
 class PaginationDTO:
@@ -9,6 +10,7 @@ class PaginationDTO:
     offset: int
     count: int
     total: int
+
 
 # Schema
 class PaginationSchema(Schema):
