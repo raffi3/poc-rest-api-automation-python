@@ -2,6 +2,7 @@ import pytest
 import requests
 import configparser
 import os
+import allure
 from pathlib import Path
 from enums.environment import Env
 from dotenv import load_dotenv
@@ -50,7 +51,6 @@ def project_root(pytestconfig) -> Path:
 @pytest.fixture(scope="session")
 def env(project_root):
     """Loads the environment from the .env file and validates it."""
-
     env_path = project_root / ".env"
     print(f"Looking for .env file at: {env_path}")
 
@@ -84,7 +84,6 @@ def config(env, project_root):
 def secrets(env, project_root):
     """Loads secrets from secrets.ini for the specified environment."""
     secrets = configparser.ConfigParser()
-
     secrets_path = project_root / 'secrets.ini'
     read_files = secrets.read(secrets_path)
 
@@ -92,15 +91,12 @@ def secrets(env, project_root):
         pytest.fail(
             f"Could not find or read secrets.ini at: {secrets_path}.\n"
             f"Please create it or copy from secrets.ini.example file and set variables (i.e. API_ACCESS_KEY).")
-
     env_name = env.value
     if env_name not in secrets:
-        pytest.fail(
-            f"\n\n[VALIDATION ERROR]\nThe section [{env.value}] is MISSING from your secrets.ini file."
+        pytest.fail(f"\n\n[VALIDATION ERROR]\nThe section [{env.value}] is MISSING from your secrets.ini file."
             f"\nPlease add this section.\n")
 
     env_object = secrets[env_name]
-    print('secrets[env.value]', env_object['access_key']) # todo rm
     # Check if the key is missing entirely
     if 'access_key' not in env_object:
         pytest.fail(
@@ -140,6 +136,7 @@ def access_key(secrets):
     return secrets['access_key']
 
 
+@allure.step("Initialize APIClient for the target environment")
 @pytest.fixture(scope="session")
 def api_client(base_url, api_version, access_key):
     """Provides an instance of the APIClient, configured for the target environment."""
