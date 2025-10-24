@@ -50,7 +50,6 @@ def project_root(pytestconfig) -> Path:
 @pytest.fixture(scope="session")
 def env(project_root):
     """Loads the environment from the .env file and validates it."""
-
     env_path = project_root / ".env"
     print(f"Looking for .env file at: {env_path}")
 
@@ -59,13 +58,11 @@ def env(project_root):
 
     load_dotenv(dotenv_path=env_path)
     env_value = os.getenv("ENV")
-    print('env_value', env_value)
 
     if not env_value:
         pytest.fail("The ENV variable is not set in the .env file.")
 
     try:
-        print('Env(env_value)', Env(env_value))
         return Env(env_value)
     except ValueError:
         valid_envs = [e.value for e in Env]
@@ -86,7 +83,6 @@ def config(env, project_root):
 def secrets(env, project_root):
     """Loads secrets from secrets.ini for the specified environment."""
     secrets = configparser.ConfigParser()
-
     secrets_path = project_root / 'secrets.ini'
     read_files = secrets.read(secrets_path)
 
@@ -94,29 +90,34 @@ def secrets(env, project_root):
         pytest.fail(
             f"Could not find or read secrets.ini at: {secrets_path}.\n"
             f"Please create it or copy from secrets.ini.example file and set variables (i.e. API_ACCESS_KEY).")
+    env_name = env.value
+    if env_name not in secrets:
+        pytest.fail(
+            f"\n\n[VALIDATION ERROR]\nThe section [{env.value}] is MISSING from your secrets.ini file."
+            f"\nPlease add this section.\n"
+        )
 
+    env_object = secrets[env_name]
     # Check if the key is missing entirely
-    if 'access_key' not in secrets:
+    if 'access_key' not in env_object:
         pytest.fail(
             f"\n\n[VALIDATION ERROR]"
-            f"\nThe 'access_key' property is MISSING from the [{env.value}] section in your secrets.ini file."
-            f"\nPlease add it: `access_key = YOUR_KEY`\n"
-        )
-    key_value = secrets['access_key']
+            f"\nThe 'access_key' property is MISSING from the [{env_name}] section in your secrets.ini file."
+            f"\nPlease add it: `access_key = YOUR_KEY`\n")
+    access_key_val = env_object['access_key']
 
     # Check if the value is empty
-    if not key_value:
+    if not access_key_val:
         pytest.fail(
-            f"\n\n[VALIDATION ERROR] The 'access_key' property in the [{env.value}] section of secrets.ini is EMPTY."
+            f"\n\n[VALIDATION ERROR] The 'access_key' property in the [{env_name}] section of secrets.ini is EMPTY."
             f"\nPlease provide your API key.\n")
 
     # Check if it's still the placeholder value from your example
-    if key_value == 'API_ACCESS_KEY':
-        pytest.fail(f"\n\n[VALIDATION ERROR] The 'access_key' in the [{env.value}] section of secrets.ini "
+    if access_key_val == 'API_ACCESS_KEY':
+        pytest.fail(f"\n\n[VALIDATION ERROR] The 'access_key' in the [{env_name}] section of secrets.ini "
                     f"is still set to the placeholder 'API_ACCESS_KEY'.\nPlease replace it with your real API key.\n")
 
-    return key_value
-    # return secrets[env.value]
+    return env_object
 
 
 @pytest.fixture(scope="session")

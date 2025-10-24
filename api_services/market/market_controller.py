@@ -1,3 +1,4 @@
+import allure
 from api_services.market.filters.eod_filters import EodFilters
 from api_services.market.filters.timezone_filters import TimezoneFilters
 
@@ -15,6 +16,7 @@ class MarketController:
         """
         self.api_client = api_client
 
+    @allure.step("Send GET request to /eod endpoint")
     def get_eod_data(self, filters: EodFilters):
         """
         Gets end-of-day data from the /eod endpoint.
@@ -25,6 +27,7 @@ class MarketController:
         endpoint = "/eod"
         return self.api_client.get(endpoint, params=filters.serialize())
 
+    @allure.step("Send GET request to /timezones endpoint")
     def get_timezones(self, filters: TimezoneFilters):
         """
         Gets timezone data from the /timezones endpoint.
