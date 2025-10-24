@@ -2,7 +2,6 @@ import pytest
 import requests
 import configparser
 import os
-import allure
 from pathlib import Path
 from enums.environment import Env
 from dotenv import load_dotenv
@@ -136,7 +135,6 @@ def access_key(secrets):
     return secrets['access_key']
 
 
-@allure.step("Initialize APIClient for the target environment")
 @pytest.fixture(scope="session")
 def api_client(base_url, api_version, access_key):
     """Provides an instance of the APIClient, configured for the target environment."""
