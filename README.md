@@ -46,6 +46,8 @@ pytest -m smoke
 pytest -m regression
 ```
 
+![API Tests Run](https://github.com/user-attachments/assets/692166a0-1243-4a1b-b322-e0fee022c00d)
+
 ### Allure Reporting
 
 This framework is configured to generate Allure reports.
@@ -62,3 +64,46 @@ This framework is configured to generate Allure reports.
     allure serve allure-results
     ```
     This will open the interactive Allure report in your web browser.
+
+![Allure Report](https://github.com/user-attachments/assets/b1bd0255-cdfa-45ba-9c93-e0ae9dcf0121)
+
+
+## Project structure
+```bash
+poc-rest-api-automation-python/
+│
+├── api_services/
+│   └── market/
+│       ├── filters/
+│       │   ├── eod_filters.py       # Dataclass for /eod endpoint query parameters.
+│       │   └── timezone_filters.py  # Dataclass for /timezones query parameters.
+│       ├── schemas/
+│       │   ├── common_schemas.py            # Reusable schemas (e.g., Pagination).
+│       │   ├── eod_response_schema.py       # Schema & DTO for the /eod response.
+│       │   ├── error_response_schema.py     # Schema & DTO for API error responses.
+│       │   └── timezone_response_schema.py  # Schema & DTO for /timezones response.
+│       └── market_controller.py             # Class that makes API calls (e.g., get_eod_data).
+│
+├── enums/
+│   └── environment.py                    # Enum for environments (DEV, STAGE, PROD).
+│
+├── tests/
+│   ├── conftest.py                       # Test-level conftest (provides 'market_controller').
+│   ├── test_market_eod_negative.py       # Negative tests for the /eod endpoint.
+│   ├── test_market_eod_positive.py       # Positive tests for the /eod endpoint.
+│   └── test_market_timezones_positive.py # Positive tests for the /timezones endpoint.
+│
+├── utils/
+│   ├── base_assertions.py    # Reusable assertions (assert_status_code, etc.).
+│   └── dataclass_factory.py  # Helper to convert dataclasses to dicts.
+│
+├── .env                    # Local environment file (e.g., ENV=dev). Not in git.
+├── .env.example            # Example template for the .env file.
+├── .flake8                 # Configuration for code style linting.
+├── config.ini              # Non-secret configs (URLs, versions) by environment.
+├── conftest.py             # Root conftest (provides 'api_client' fixture).
+├── pytest.ini              # Pytest configuration (markers, Allure reports).
+├── README.md               # This file! Project documentation.
+├── requirements.txt        # List of all Python packages needed for the project.
+└── secrets.ini             # Secret API keys. Not in git.
+```
