@@ -68,6 +68,27 @@ This framework is configured to generate Allure reports.
 ![Allure Report](https://github.com/user-attachments/assets/b1bd0255-cdfa-45ba-9c93-e0ae9dcf0121)
 
 
+### Test Validation Strategy
+
+| **Test / Scenario** | **Assertion/Check** | **Reason** | 
+| :--- | :--- | :--- |
+| **All Tests** | HTTP Status Code Validation | To confirm the server processed the request as expected (e.g., `200` for success, `422` for a known error). | 
+| **All Tests** | Response Schema and Data Types Validation | To enforce the API "contract," ensuring all required fields are present, data types are correct, and no unexpected fields are returned. | 
+| `test_get_eod_data_with_symbols` | `pagination.total` is greater than 0 | To confirm the API found at least one record for the symbol. | 
+| `test_get_eod_data_with_symbols` | `data` list is not empty | To ensure the API is returning data records. | 
+| `test_get_eod_data_with_symbols` | `data[0].symbol` matches the requested symbol | To verify the API returned data for the correct symbol that was requested. | 
+| `test_get_eod_data_with_filters` | Number of items in `data` list equals `expected_count` | To verify that API filters like `limit` are being applied correctly. | 
+| `test_get_eod_data_negative_scenarios` | `error.code` matches `expected_error_code` | To verify the API fails *for the correct reason* (e.g., `no_valid_symbols_provided`). | 
+| `test_get_eod_data_negative_scenarios` | `error.message` contains `expected_error_message` | To ensure the API provides a helpful and correct error message to the user. | 
+| `test_get_eod_data_missing_symbols` | `error.code` is `validation_error` | To verify the API correctly identifies a missing required parameter. | 
+| `test_get_eod_data_missing_symbols` | `error.message` contains "You have to specify at least one symbol" | To confirm the specific error message for this missing parameter is correct. | 
+| `test_get_all_timezones` | `pagination.total` is greater than 0 | To confirm the API is returning a list of timezones. | 
+| `test_get_all_timezones` | `data` list contains a known value (e.g., "America/New_York") | To perform a quick "spot check" that the returned data is valid and as expected. | 
+| `test_get_timezones_with_pagination` | `pagination.limit` and `pagination.offset` match request | To verify the API correctly reports the pagination parameters it used. | 
+| `test_get_timezones_with_pagination` | Number of items in `data` list matches `limit` | To verify the `limit` filter is correctly applied to the data set. | 
+| `test_timezone_abbreviations` | `abbr` and `abbr_dst` fields match expected values | To verify specific business logic and data points within the API response are correct. |
+
+
 ## Project structure
 ```bash
 poc-rest-api-automation-python/
